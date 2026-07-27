@@ -3,7 +3,7 @@ from PIL import Image
 
 
 def merge_pages_rtl(img_right, img_left):
-    if type(img_right) is Image:
+    if isinstance(img_right, Image.Image):
         img_right_np = np.asarray(img_right)
         img_left_np = np.asarray(img_left)
     else:
@@ -16,7 +16,7 @@ def merge_pages_rtl(img_right, img_left):
 
 
 def extract_edges(img, edge_width=64):
-    if type(img) is Image:
+    if isinstance(img, Image.Image):
         img_np = np.asarray(img)
     else:
         img_np = img
