@@ -4,6 +4,8 @@ from torchvision import models
 
 
 class PageSequenceClassifier(nn.Module):
+    MAX_SEQUENCE_LENGTH = 200
+
     def __init__(self, num_classes, hidden_dim):
         super().__init__()
         edge_resnet = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
@@ -32,7 +34,7 @@ class PageSequenceClassifier(nn.Module):
         self.feature_projection = nn.Linear(512 + 512 + 512 + 1, hidden_dim)
         self.projection_dropout = nn.Dropout(p=0.3)
 
-        self.position_embedding = nn.Embedding(200, hidden_dim)
+        self.position_embedding = nn.Embedding(self.MAX_SEQUENCE_LENGTH, hidden_dim)
 
         self.sequence_processor = nn.LSTM(
             input_size=hidden_dim,
