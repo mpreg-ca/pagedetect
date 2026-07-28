@@ -38,11 +38,6 @@ def chunk_sequence(items, ratios, max_len=200, overlap=30):
     while start < total:
         end = min(start + max_len, total)
         
-        # If a tiny remainder chunk is left at the end, slide the window 
-        # backward to maintain maximum possible sequence context length
-        if end - start < overlap and start > 0:
-            start = max(0, end - max_len)
-
         if end == total and (end - start) < max_len and start > 0:
             start = max(0, end - max_len)
 
