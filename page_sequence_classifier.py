@@ -73,7 +73,7 @@ class PageSequenceClassifier(nn.Module):
             self.transition_scores[0, 2] = -1.0  # right -> double = bad
             self.transition_scores[1, 2] = 0.5  # left -> double = good
 
-    def forward(self, left_edge_x, right_edge_x, spread_x, ratios, lengths):
+    def forward(self, left_edge_x, right_edge_x, spread_x, ratios):
         batch_size, max_seq_len, c, h, w = left_edge_x.size()
 
         left_flat = left_edge_x.view(batch_size * max_seq_len, c, h, w)
@@ -99,14 +99,7 @@ class PageSequenceClassifier(nn.Module):
         positions = torch.arange(max_seq_len, device=projected.device)
         projected = projected + self.position_embedding(positions).unsqueeze(0)
 
-        lengths_cpu = lengths.cpu()
-        packed_input = nn.utils.rnn.pack_padded_sequence(
-            projected, lengths_cpu, batch_first=True, enforce_sorted=False
-        )
-        packed_output, _ = self.sequence_processor(packed_input)
-        seq_features, _ = nn.utils.rnn.pad_packed_sequence(
-            packed_output, batch_first=True, total_length=max_seq_len
-        )
+        seq_features, _ = self.sequence_processor(projected)
 
         seq_features = self.dropout(seq_features)
         seq_logits = self.classifier(seq_features)
